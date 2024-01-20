@@ -3,7 +3,7 @@
 
 # Import
 import random
-from os import system, name
+from clear_screen import clear
 
 # Board (tabuleiro)
 board = ['''
@@ -77,28 +77,22 @@ class Hangman:
         self.word = random.choice(word_list)
         self.uncovered = []
         self.wrong = []
-        self.chances = len(self.word)
-        self.clear_screen()
-
-    def clear_screen(self):
-        if name == 'nt':
-            _ = system('cls')
-        else:
-            _ = system('clear')
-            
+        self.chances = 6
+        self.board_index = 0
+        clear()
+        
 	# Método para adivinhar a letra
     def guess(self, uncovered):
         self.guess = input('Choose a letter: ').lower()
-        self.wrong = []
-        if self.guess in word:
+        if self.guess in self.word:
             i = 0
-            for letter in word:
-                if guess == letter:
-                    uncovered[i] = guess
+            for letter in self.word:
+                if self.guess == letter:
+                    uncovered[i] = self.guess
                 i += 1
         else:
-            wrong.append(guess)
-            print('Letras erradas: ', wrong)
+            self.wrong.append(self.guess)
+            print('Letras erradas: ', self.wrong)
             chances -= 1
         
 	# Método para verificar se o jogo terminou
@@ -128,6 +122,7 @@ class Hangman:
         
 	# Método para checar o status do game e imprimir o board na tela
     def status(self, uncovered, chances, wrong):
+        print(board[self.board_index])
         print(uncovered)
         print('\nVocê tem ', chances, ' chances!')
         print('Letras erradas: ', wrong)
