@@ -5,6 +5,7 @@ from clear_screen import clear
 word_list = ['manga', 'goiaba', 'uva', 'geladeira', 'banana', 'melancia', 'carro', 'aviao', 'livro', 'casa']
 
 #todo Handle non letter inputs
+#todo More modularization > word choice
 
 # Board (tabuleiro)
 board = ['''
@@ -121,7 +122,6 @@ def check_game_over(uncovered, word):
 #Game function
 def hangman():
 
-    initialise_game(word_list)
     uncovered, word, chances, wrong, board_index = initialise_game(word_list)
     
     while chances > 0:
