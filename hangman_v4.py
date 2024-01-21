@@ -66,63 +66,76 @@ O   |
      |
 =========''']
 
+word_list = ['manga', 'goiaba', 'uva', 'geladeira', 'banana', 'melancia', 'carro', 'aviao', 'livro', 'casa']
 
 # Classe
 class Hangman:
-
+    uncovered = []
+    wrong = []
+    chances = 6
+    board_index = 0
+    
 	# Método Construtor
     def __init__(self, word_list):
         self.word_list = word_list
         self.board = board
         self.word = random.choice(word_list)
-        self.uncovered = []
-        self.wrong = []
-        self.chances = 6
-        self.board_index = 0
+        print(board[0])
         clear()
-        
-	# Método para adivinhar a letra
-    def guess(self, uncovered):
-        self.guess = input('Choose a letter: ').lower()
-        if self.guess in self.word:
-            i = 0
-            for letter in self.word:
-                if self.guess == letter:
-                    uncovered[i] = self.guess
-                i += 1
-        else:
-            self.wrong.append(self.guess)
-            print('Letras erradas: ', self.wrong)
-            chances -= 1
-        
-	# Método para verificar se o jogo terminou
-    def endgame(self, uncovered):
-        while chances > 0:
-            self.status(uncovered, chances, wrong)
-            guess = get_guess()
-            chances, wrong, uncovered = update_game_status(uncovered, word, guess, chances, wrong)
-            if win(uncovered, word):
-                break
-            else:
-                print("\nVoce perdeu =( A palavra era :", word)
-        
-	# Método para verificar se o jogador venceu
-    def win(self, uncovered):
+    
+    def choose_word(self):
+        word = random.choice(word_list)
+        uncovered = ['_' for letter in word]
+        return word, uncovered
+    
+    def get_guess(self):
+        guess = input('\nEscolha uma letra: ').lower()
+        return guess  
+                    
+    def check_game_over(self, uncovered, word):
         if "_" not in uncovered:
             print(uncovered)
-            print("\nVoce venceu! A palavra é :", word, "\n") 
+            print(f"\nVoce venceu! A palavra é : {word}\n") 
             return True
         else:
-            return False
+            return False       
+    
+    def update_uncovered(self, word, guess, uncovered):
+        for i, letter in enumerate(word):
+            if guess == letter:
+                uncovered[i] = guess
+        return uncovered
+    
+    def update_game_status(self, guess, uncovered, word, chances, wrong, board_index):
+        if guess in wrong:
+            print('Voce ja escolheu essa letra!\n')
+        elif guess in word:
+            self.update_uncovered(word, guess, uncovered)
+        else:
+            wrong.append(guess)
+            chances -= 1
+            board_index += 1
+        print()
+        return chances, wrong, uncovered, board_index
         
-	# Método para não mostrar a letra no board
-    def uncovered(self, word):
-        self.uncovered = ['_' for letter in word]
-        print(self.uncovered)
-        
-	# Método para checar o status do game e imprimir o board na tela
-    def status(self, uncovered, chances, wrong):
-        print(board[self.board_index])
+    def game_status(self, uncovered, chances, wrong, board_index):
+        print(board[board_index])
+        print()
         print(uncovered)
-        print('\nVocê tem ', chances, ' chances!')
+        print(f'\nVocê tem {chances} chances!')
         print('Letras erradas: ', wrong)
+        
+    def hangman(self, uncovered, word, chances, wrong, board_index):
+
+        while chances > 0:
+            self.game_status(uncovered, chances, wrong)
+            guess = self.get_guess()
+            chances, wrong, uncovered, board_index = self.update_game_status(uncovered, word, guess, chances, wrong, board_index)
+            if self.check_game_over():
+                break
+        else:
+            print(f'Voce perdeu =( A palavra era : {word} \n')
+        
+#Main
+if __name__ == "__main__":
+    game = Hangman(word_list)
